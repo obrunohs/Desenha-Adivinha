@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Desenha & Adivinha - 2 Jogadores</title>
+  <style>
+    :root {
+      --bg: #101827;
+      --card: #172235;
+      --card2: #1f2f49;
+      --text: #f7fafc;
+      --muted: #a8b3c7;
+      --accent: #60a5fa;
+      --accent2: #34d399;
+      --danger: #fb7185;
+      --warning: #fbbf24;
+      --line: rgba(255,255,255,.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      background: radial-gradient(circle at top, #1e3a8a 0%, var(--bg) 42%, #070b12 100%);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .app {
+      width: min(1180px, 100%);
+    }
+
+    .hero {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1 {
+      font-size: clamp(28px, 5vw, 52px);
+      margin-bottom: 6px;
+      letter-spacing: -1px;
+    }
+
+    .subtitle { color: var(--muted); margin-bottom: 0; }
+
+    .card {
+      background: rgba(23, 34, 53, .92);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: 0 20px 70px rgba(0,0,0,.32);
+      padding: 22px;
+      backdrop-filter: blur(10px);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    @media (max-width: 850px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    label {
+      display: block;
+      color: var(--muted);
+      font-weight: bold;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #0d1422;
+      color: var(--text);
+      padding: 13px 14px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    input:focus { border-color: var(--accent); }
+
+    button {
+      border: 0;
+      border-radius: 14px;
+      padding: 13px 16px;
+      font-weight: 800;
+      cursor: pointer;
+      color: #06111f;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      transition: transform .12s ease, opacity .12s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+    .secondary { background: #e5e7eb; }
+    .danger { background: var(--danger); color: #fff; }
+    .warning { background: var(--warning); }
+
+    .hidden { display: none !important; }
+
+    .room-code {
+      font-size: clamp(28px, 5vw, 48px);
+      font-weight: 900;
+      letter-spacing: 8px;
+      color: var(--accent2);
+      text-align: center;
+      padding: 18px;
+      background: rgba(0,0,0,.22);
+      border-radius: 18px;
+      user-select: all;
+    }
+
+    .status {
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(96,165,250,.14);
+      border: 1px solid rgba(96,165,250,.25);
+      color: #dbeafe;
+      margin: 14px 0;
+    }
+
+    .player-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .player {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid var(--line);
+      padding: 12px;
+      border-radius: 16px;
+    }
+
+    .badge {
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 12px;
+      color: #07111f;
+      background: var(--accent2);
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .badge.gray { background: #cbd5e1; }
+    .badge.red { background: var(--danger); color: #fff; }
+    .badge.yellow { background: var(--warning); }
+
+    .game-layout {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 18px;
+    }
+
+    @media (max-width: 980px) {
+      .game-layout { grid-template-columns: 1fr; }
+    }
+
+    .canvas-wrap {
+      background: #fff;
+      border-radius: 20px;
+      padding: 10px;
+      overflow: hidden;
+    }
+
+    canvas {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 14px;
+      background: #fff;
+      touch-action: none;
+    }
+
+    .tools {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 12px;
+    }
+
+    .tools input[type="color"] {
+      width: 52px;
+      height: 45px;
+      padding: 4px;
+    }
+
+    .tools input[type="range"] { width: 130px; }
+
+    .words {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .word-btn {
+      padding: 10px;
+      background: #e5e7eb;
+      color: #0f172a;
+      border-radius: 12px;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .word-btn.wrong {
+      background: #fecdd3;
+      color: #881337;
+      text-decoration: line-through;
+    }
+
+    .word-btn.correct {
+      background: #bbf7d0;
+      color: #14532d;
+    }
+
+    .x-box {
+      font-size: 42px;
+      letter-spacing: 8px;
+      color: var(--danger);
+      min-height: 54px;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .big-result {
+      padding: 18px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.07);
+      border: 1px solid var(--line);
+      margin-top: 12px;
+      text-align: center;
+    }
+
+    .small { color: var(--muted); font-size: 14px; }
+    .copy { user-select: all; }
+
+
+    @media (max-width: 950px) and (orientation: landscape) {
+      body {
+        padding: 8px;
+        overflow-x: hidden;
+      }
+
+      .app { width: 100%; }
+
+      .hero {
+        margin-bottom: 8px;
+        gap: 8px;
+      }
+
+      h1 {
+        font-size: 24px;
+        margin-bottom: 0;
+      }
+
+      h2 { font-size: 18px; margin-bottom: 8px; }
+      h3 { font-size: 15px; margin-bottom: 8px; }
+      .subtitle { display: none; }
+
+      .card {
+        padding: 10px;
+        border-radius: 16px;
+      }
+
+      .game-layout {
+        grid-template-columns: minmax(0, 1fr) 280px;
+        gap: 8px;
+        align-items: start;
+      }
+
+      .status {
+        margin: 6px 0;
+        padding: 8px 10px;
+        font-size: 13px;
+      }
+
+      .canvas-wrap {
+        padding: 5px;
+        border-radius: 14px;
+      }
+
+      canvas {
+        width: auto;
+        max-width: 100%;
+        max-height: calc(100vh - 126px);
+        margin: 0 auto;
+      }
+
+      .tools {
+        gap: 6px;
+        margin-top: 6px;
+      }
+
+      .tools label,
+      .small,
+      .word-btn,
+      button {
+        font-size: 12px;
+      }
+
+      button {
+        padding: 9px 10px;
+        border-radius: 10px;
+      }
+
+      .words {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 5px;
+        margin-top: 6px;
+      }
+
+      .word-btn {
+        padding: 7px 6px;
+      }
+
+      .x-box {
+        font-size: 30px;
+        min-height: 36px;
+      }
+
+      .big-result {
+        padding: 10px;
+        margin-top: 8px;
+      }
+
+      hr { margin: 8px 0 !important; }
+    }
+
+    @media (max-width: 650px) and (orientation: portrait) {
+      body::before {
+        content: "Para jogar melhor, vire o celular de lado.";
+        display: block;
+        position: fixed;
+        z-index: 9999;
+        inset: 0;
+        background: rgba(7, 11, 18, .96);
+        color: white;
+        font-size: 24px;
+        font-weight: 900;
+        text-align: center;
+        padding: 38vh 24px 0;
+      }
+
+      #setup::before,
+      #lobby::before {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="hero">
+      <div>
+        <h1>Desenha & Adivinha</h1>
+        <p class="subtitle">Jogo 2D online para 2 jogadores usando Firebase em tempo real.</p>
+      </div>
+      <button id="btnResetLocal" class="secondary">Sair da sala</button>
+    </section>
+
+    <section id="setup" class="grid">
+      <div class="card">
+        <h2>Criar sala</h2>
+        <label for="createName">Seu nome</label>
+        <input id="createName" placeholder="Ex: Bruno" maxlength="18" />
+        <div class="btn-row">
+          <button id="btnCreate">Criar sala</button>
+        </div>
+        <p class="small" style="margin-top:14px">Depois envie o código para o outro jogador.</p>
+      </div>
+
+      <div class="card">
+        <h2>Entrar em sala</h2>
+        <label for="joinName">Seu nome</label>
+        <input id="joinName" placeholder="Ex: Ana" maxlength="18" />
+        <label for="joinCode" style="margin-top:12px">Código da sala</label>
+        <input id="joinCode" placeholder="Ex: A7K2Q" maxlength="5" />
+        <div class="btn-row">
+          <button id="btnJoin">Entrar</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="lobby" class="card hidden">
+      <h2>Sala criada</h2>
+      <p class="small">Compartilhe este código com o segundo jogador:</p>
+      <div id="roomCode" class="room-code">-----</div>
+      <div id="lobbyStatus" class="status">Aguardando jogadores...</div>
+      <div id="players" class="player-list"></div>
+      <div class="btn-row">
+        <button id="btnStart" disabled>Sortear funções e começar</button>
+      </div>
+    </section>
+
+    <section id="game" class="hidden">
+      <div class="game-layout">
+        <div class="card">
+          <h2 id="roleTitle">Jogo</h2>
+          <div id="gameStatus" class="status"></div>
+
+          <div class="canvas-wrap">
+            <canvas id="board" width="900" height="560"></canvas>
+          </div>
+
+          <div id="drawTools" class="tools hidden">
+            <label>Cor <input id="color" type="color" value="#111827" /></label>
+            <label>Tamanho <input id="size" type="range" min="2" max="34" value="8" /></label>
+            <button id="btnUndo" class="secondary">Desfazer último traço</button>
+            <button id="btnClear" class="warning">Limpar desenho</button>
+          </div>
+        </div>
+
+        <aside class="card">
+          <h3>Placar</h3>
+          <div id="scoreInfo" class="small"></div>
+          <hr style="border-color:var(--line); border-style:solid; margin:16px 0" />
+
+          <div id="drawerPanel" class="hidden">
+            <h3>Objeto para desenhar</h3>
+            <div id="secretWord" class="big-result" style="font-size:28px;font-weight:900"></div>
+            <p class="small" style="margin-top:12px">Desenhe aos poucos. O outro jogador verá tudo em tempo real.</p>
+          </div>
+
+          <div id="guesserPanel" class="hidden">
+            <h3>Escolha o objeto</h3>
+            <p class="small">Você tem até 3 tentativas. Cada erro vira um X.</p>
+            <div id="xBox" class="x-box"></div>
+            <div id="words" class="words"></div>
+          </div>
+
+          <div id="resultPanel" class="hidden big-result"></div>
+
+          <div class="btn-row">
+            <button id="btnNewRound" class="hidden">Nova rodada</button>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <script type="module">
+    // 1) Crie um projeto no Firebase.
+    // 2) Ative Cloud Firestore.
+    // 3) Troque os dados abaixo pelo firebaseConfig do seu projeto.
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+    import {
+      getFirestore,
+      doc,
+      getDoc,
+      setDoc,
+      updateDoc,
+      deleteDoc,
+      onSnapshot,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAd-73yu6VybMMP7WHjUiHPbPzadHrCmek",
+      authDomain: "desenha-adivinha.firebaseapp.com",
+      projectId: "desenha-adivinha",
+      storageBucket: "desenha-adivinha.firebasestorage.app",
+      messagingSenderId: "350417452805",
+      appId: "1:350417452805:web:25c595327bb91b7201816c"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const OBJECTS = [
+      "casa", "avião", "bicicleta", "gato", "cachorro", "sol", "lua", "estrela", "árvore", "flor",
+      "carro", "barco", "peixe", "bola", "chapéu", "óculos", "relógio", "telefone", "computador", "cadeira",
+      "mesa", "sapato", "camisa", "coração", "guarda-chuva", "foguete", "pizza", "hambúrguer", "sorvete", "bolo",
+      "violão", "tambor", "livro", "lápis", "tesoura", "chave", "porta", "janela", "ponte", "montanha",
+      "nuvem", "raio", "robô", "dinossauro", "borboleta", "abelha", "cobra", "tartaruga", "coelho", "cavalo"
+    ];
+
+    const $ = (id) => document.getElementById(id);
+
+    const setup = $("setup");
+    const lobby = $("lobby");
+    const game = $("game");
+    const roomCodeEl = $("roomCode");
+    const playersEl = $("players");
+    const lobbyStatus = $("lobbyStatus");
+    const btnStart = $("btnStart");
+    const btnCreate = $("btnCreate");
+    const btnJoin = $("btnJoin");
+    const btnResetLocal = $("btnResetLocal");
+    const btnNewRound = $("btnNewRound");
+    const btnUndo = $("btnUndo");
+    const btnClear = $("btnClear");
+    const board = $("board");
+    const ctx = board.getContext("2d");
+
+    let roomId = localStorage.getItem("drawGuessRoom") || "";
+    let playerId = localStorage.getItem("drawGuessPlayer") || "";
+    let playerName = localStorage.getItem("drawGuessName") || "";
+    let unsubscribe = null;
+    let roomData = null;
+    let drawing = false;
+    let currentStroke = null;
+    let lastSentAt = 0;
+    let heartbeatTimer = null;
+    let abandonmentTimer = null;
+    const HEARTBEAT_EVERY = 3000;
+    const ABANDON_LIMIT = 11000;
+
+
+    async function requestLandscapeMode() {
+      try {
+        if (document.documentElement.requestFullscreen && !document.fullscreenElement) {
+          await document.documentElement.requestFullscreen();
+        }
+        if (screen.orientation && screen.orientation.lock) {
+          await screen.orientation.lock("landscape");
+        }
+      } catch (error) {
+        console.log("Orientação automática não permitida neste navegador.", error);
+      }
+    }
+
+    async function unlockOrientationMode() {
+      try {
+        if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock();
+        if (document.fullscreenElement && document.exitFullscreen) await document.exitFullscreen();
+      } catch (error) {
+        console.log("Não foi possível destravar a orientação.", error);
+      }
+    }
+
+    function withPresence(player) {
+      return {
+        ...player,
+        online: true,
+        lastSeen: Date.now()
+      };
+    }
+
+    async function updatePresence(isOnline = true) {
+      if (!roomId || !playerId || !roomData) return;
+      const ref = doc(db, "rooms", roomId);
+      const players = (roomData.players || []).map(p => {
+        if (p.id !== playerId) return p;
+        return { ...p, online: isOnline, lastSeen: Date.now() };
+      });
+      try {
+        await updateDoc(ref, { players });
+      } catch (error) {
+        console.log("Falha ao atualizar presença.", error);
+      }
+    }
+
+    function startPresenceHeartbeat() {
+      if (heartbeatTimer) clearInterval(heartbeatTimer);
+      heartbeatTimer = setInterval(() => updatePresence(true), HEARTBEAT_EVERY);
+    }
+
+    function stopPresenceHeartbeat() {
+      if (heartbeatTimer) clearInterval(heartbeatTimer);
+      heartbeatTimer = null;
+    }
+
+    function isPlayerActive(player) {
+      return player && player.online !== false && Date.now() - Number(player.lastSeen || 0) < ABANDON_LIMIT;
+    }
+
+    async function checkAbandonment() {
+      if (!roomData || roomData.phase !== "game") return;
+      const players = roomData.players || [];
+      const me = players.find(p => p.id === playerId);
+      const other = players.find(p => p.id !== playerId);
+      if (!me || !isPlayerActive(me)) return;
+
+      if (!other || !isPlayerActive(other)) {
+        try {
+          await updateDoc(doc(db, "rooms", roomId), {
+            phase: "lobby",
+            drawerId: "",
+            guesserId: "",
+            round: null,
+            players: [withPresence({ id: playerId, name: playerName || me.name })]
+          });
+          alert("O outro jogador saiu da partida. Você voltou para o lobby.");
+        } catch (error) {
+          console.log("Falha ao voltar para o lobby.", error);
+        }
+      }
+    }
+
+    function startAbandonmentWatcher() {
+      if (abandonmentTimer) clearInterval(abandonmentTimer);
+      abandonmentTimer = setInterval(checkAbandonment, 2500);
+    }
+
+    function stopAbandonmentWatcher() {
+      if (abandonmentTimer) clearInterval(abandonmentTimer);
+      abandonmentTimer = null;
+    }
+
+    function makeRoomCode() {
+      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+      let code = "";
+      for (let i = 0; i < 5; i++) code += chars[Math.floor(Math.random() * chars.length)];
+      return code;
+    }
+
+    function makePlayerId() {
+      return crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random();
+    }
+
+    function shuffle(arr) {
+      return [...arr].sort(() => Math.random() - 0.5);
+    }
+
+    function pickRound() {
+      const answer = OBJECTS[Math.floor(Math.random() * OBJECTS.length)];
+      const options = shuffle(OBJECTS.filter(w => w !== answer)).slice(0, 24);
+      return {
+        answer,
+        options: shuffle([...options, answer]),
+        strokes: [],
+        guesses: [],
+        wrong: 0,
+        status: "playing",
+        winner: "",
+        roundStartedAt: Date.now()
+      };
+    }
+
+    function show(section) {
+      setup.classList.toggle("hidden", section !== "setup");
+      lobby.classList.toggle("hidden", section !== "lobby");
+      game.classList.toggle("hidden", section !== "game");
+    }
+
+    function saveLocal() {
+      localStorage.setItem("drawGuessRoom", roomId);
+      localStorage.setItem("drawGuessPlayer", playerId);
+      localStorage.setItem("drawGuessName", playerName);
+    }
+
+    async function clearLocal() {
+      await updatePresence(false);
+      stopPresenceHeartbeat();
+      stopAbandonmentWatcher();
+      localStorage.removeItem("drawGuessRoom");
+      localStorage.removeItem("drawGuessPlayer");
+      localStorage.removeItem("drawGuessName");
+      location.reload();
+    }
+
+    async function createRoom() {
+      const name = $("createName").value.trim();
+      if (!name) return alert("Digite seu nome.");
+      await requestLandscapeMode();
+
+      roomId = makeRoomCode();
+      playerId = makePlayerId();
+      playerName = name;
+      saveLocal();
+
+      await setDoc(doc(db, "rooms", roomId), {
+        createdAt: serverTimestamp(),
+        hostId: playerId,
+        phase: "lobby",
+        players: [withPresence({ id: playerId, name })],
+        drawerId: "",
+        guesserId: "",
+        round: null
+      });
+
+      listenRoom();
+    }
+
+    async function joinRoom() {
+      const name = $("joinName").value.trim();
+      const code = $("joinCode").value.trim().toUpperCase();
+      if (!name || !code) return alert("Digite seu nome e o código da sala.");
+      await requestLandscapeMode();
+
+      const ref = doc(db, "rooms", code);
+      const snap = await getDoc(ref);
+      if (!snap.exists()) return alert("Sala não encontrada.");
+
+      const data = snap.data();
+      if ((data.players || []).length >= 2 && !(data.players || []).some(p => p.name === name)) {
+        return alert("Essa sala já tem 2 jogadores.");
+      }
+
+      roomId = code;
+      playerId = makePlayerId();
+      playerName = name;
+      saveLocal();
+
+      const players = data.players || [];
+      await updateDoc(ref, {
+        players: [...players, withPresence({ id: playerId, name })]
+      });
+
+      listenRoom();
+    }
+
+    function listenRoom() {
+      if (!roomId) return;
+      if (unsubscribe) unsubscribe();
+      unsubscribe = onSnapshot(doc(db, "rooms", roomId), (snap) => {
+        if (!snap.exists()) {
+          alert("A sala foi encerrada porque alguém saiu.");
+          clearLocal();
+          return;
+        }
+        roomData = snap.data();
+        const stillInRoom = (roomData.players || []).some(p => p.id === playerId);
+        if (playerId && !stillInRoom) {
+          alert("Você saiu da sala ou a sala foi reiniciada.");
+          clearLocal();
+          return;
+        }
+        render();
+        startPresenceHeartbeat();
+        startAbandonmentWatcher();
+      }, (error) => {
+        console.error(error);
+        alert("Erro no Firebase. Confira o firebaseConfig e as regras do Firestore.");
+      });
+    }
+
+    async function startRound() {
+      if (!roomData || (roomData.players || []).length < 2) return;
+      const players = shuffle((roomData.players || []).filter(isPlayerActive));
+      if (players.length < 2) return alert("Aguardando dois jogadores ativos.");
+      await updateDoc(doc(db, "rooms", roomId), {
+        phase: "game",
+        drawerId: players[0].id,
+        guesserId: players[1].id,
+        round: pickRound()
+      });
+    }
+
+    async function newRound() {
+      const players = shuffle((roomData.players || []).filter(isPlayerActive));
+      if (players.length < 2) return alert("Aguardando dois jogadores ativos.");
+      await updateDoc(doc(db, "rooms", roomId), {
+        drawerId: players[0].id,
+        guesserId: players[1].id,
+        round: pickRound()
+      });
+    }
+
+    function render() {
+      roomCodeEl.textContent = roomId || "-----";
+      const players = roomData.players || [];
+
+      if (roomData.phase === "lobby") {
+        unlockOrientationMode();
+        stopAbandonmentWatcher();
+        show("lobby");
+        playersEl.innerHTML = players.map(p => `
+          <div class="player">
+            <strong>${escapeHtml(p.name)}</strong>
+            <span class="badge ${p.id === roomData.hostId ? "" : "gray"}">${p.id === roomData.hostId ? "criador" : "jogador"}</span>
+          </div>
+        `).join("");
+        lobbyStatus.textContent = players.length < 2 ? "Aguardando o segundo jogador entrar..." : "Dois jogadores prontos. O criador pode começar.";
+        btnStart.disabled = !(players.length === 2 && playerId === roomData.hostId);
+        return;
+      }
+
+      requestLandscapeMode();
+      show("game");
+      renderGame();
+    }
+
+    function renderGame() {
+      const players = roomData.players || [];
+      const drawer = players.find(p => p.id === roomData.drawerId);
+      const guesser = players.find(p => p.id === roomData.guesserId);
+      const isDrawer = playerId === roomData.drawerId;
+      const isGuesser = playerId === roomData.guesserId;
+      const round = roomData.round || {};
+
+      $("roleTitle").textContent = isDrawer ? "Você vai desenhar" : "Você vai adivinhar";
+      $("gameStatus").textContent = isDrawer
+        ? `${guesser?.name || "O outro jogador"} está tentando adivinhar.`
+        : `${drawer?.name || "O outro jogador"} está desenhando em tempo real.`;
+
+      $("scoreInfo").innerHTML = `
+        <p><strong>Desenhista:</strong> ${escapeHtml(drawer?.name || "-")}</p>
+        <p><strong>Adivinhador:</strong> ${escapeHtml(guesser?.name || "-")}</p>
+        <p><strong>Tentativas erradas:</strong> ${round.wrong || 0}/3</p>
+      `;
+
+      $("drawerPanel").classList.toggle("hidden", !isDrawer);
+      $("guesserPanel").classList.toggle("hidden", !isGuesser);
+      $("drawTools").classList.toggle("hidden", !isDrawer || round.status !== "playing");
+      btnNewRound.classList.toggle("hidden", playerId !== roomData.hostId);
+
+      $("secretWord").textContent = isDrawer ? round.answer : "";
+      $("xBox").textContent = "X".repeat(round.wrong || 0);
+
+      renderWords(round, isGuesser);
+      renderResult(round);
+      redraw(round.strokes || []);
+    }
+
+    function renderWords(round, isGuesser) {
+      const wordsEl = $("words");
+      if (!isGuesser) return;
+
+      const guesses = round.guesses || [];
+      wordsEl.innerHTML = (round.options || []).map(word => {
+        const guessed = guesses.find(g => g.word === word);
+        const cls = guessed ? (guessed.correct ? "correct" : "wrong") : "";
+        const disabled = guessed || round.status !== "playing";
+        return `<button class="word-btn ${cls}" ${disabled ? "disabled" : ""} data-word="${escapeAttr(word)}">${escapeHtml(word)}</button>`;
+      }).join("");
+
+      wordsEl.querySelectorAll("button[data-word]").forEach(btn => {
+        btn.addEventListener("click", () => guess(btn.dataset.word));
+      });
+    }
+
+    function renderResult(round) {
+      const result = $("resultPanel");
+      if (!round || round.status === "playing") {
+        result.classList.add("hidden");
+        return;
+      }
+
+      result.classList.remove("hidden");
+      if (round.status === "won") {
+        result.innerHTML = `<h3>Acertou!</h3><p>O objeto era <strong>${escapeHtml(round.answer)}</strong>.</p>`;
+      } else {
+        result.innerHTML = `<h3>Game Over</h3><p>O objeto era <strong>${escapeHtml(round.answer)}</strong>.</p>`;
+      }
+    }
+
+    async function guess(word) {
+      const round = roomData.round;
+      if (!round || round.status !== "playing" || playerId !== roomData.guesserId) return;
+
+      const correct = word === round.answer;
+      const guesses = [...(round.guesses || []), { word, correct, at: Date.now() }];
+      const wrong = correct ? round.wrong : (round.wrong || 0) + 1;
+      const status = correct ? "won" : (wrong >= 3 ? "lost" : "playing");
+
+      await updateDoc(doc(db, "rooms", roomId), {
+        "round.guesses": guesses,
+        "round.wrong": wrong,
+        "round.status": status,
+        "round.winner": correct ? playerId : ""
+      });
+    }
+
+    function getPoint(evt) {
+      const rect = board.getBoundingClientRect();
+      const client = evt.touches ? evt.touches[0] : evt;
+      return {
+        x: (client.clientX - rect.left) * (board.width / rect.width),
+        y: (client.clientY - rect.top) * (board.height / rect.height)
+      };
+    }
+
+    function startDraw(evt) {
+      if (!canDraw()) return;
+      drawing = true;
+      const p = getPoint(evt);
+      currentStroke = {
+        color: $("color").value,
+        size: Number($("size").value),
+        points: [p]
+      };
+      evt.preventDefault();
+    }
+
+    function moveDraw(evt) {
+      if (!drawing || !currentStroke || !canDraw()) return;
+      const p = getPoint(evt);
+      currentStroke.points.push(p);
+      redraw([...(roomData.round.strokes || []), currentStroke]);
+
+      const now = Date.now();
+      if (now - lastSentAt > 90) {
+        lastSentAt = now;
+        saveCurrentStroke(false);
+      }
+      evt.preventDefault();
+    }
+
+    async function endDraw() {
+      if (!drawing || !currentStroke || !canDraw()) return;
+      drawing = false;
+      await saveCurrentStroke(true);
+      currentStroke = null;
+    }
+
+    async function saveCurrentStroke(finalize) {
+      if (!currentStroke || !roomData?.round) return;
+      const strokes = [...(roomData.round.strokes || [])];
+      if (finalize) strokes.push(currentStroke);
+      else strokes.push({ ...currentStroke, preview: true });
+
+      await updateDoc(doc(db, "rooms", roomId), {
+        "round.strokes": strokes.filter((s, i, arr) => !s.preview || i === arr.length - 1)
+      });
+    }
+
+    function canDraw() {
+      return roomData && playerId === roomData.drawerId && roomData.round?.status === "playing";
+    }
+
+    function redraw(strokes) {
+      ctx.clearRect(0, 0, board.width, board.height);
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, board.width, board.height);
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+
+      strokes.forEach(stroke => {
+        const points = stroke.points || [];
+        if (points.length < 1) return;
+        ctx.strokeStyle = stroke.color || "#111827";
+        ctx.lineWidth = stroke.size || 8;
+        ctx.beginPath();
+        ctx.moveTo(points[0].x, points[0].y);
+        points.forEach(p => ctx.lineTo(p.x, p.y));
+        ctx.stroke();
+      });
+    }
+
+    async function clearDrawing() {
+      if (!canDraw()) return;
+      await updateDoc(doc(db, "rooms", roomId), { "round.strokes": [] });
+    }
+
+    async function undoStroke() {
+      if (!canDraw()) return;
+      const strokes = [...(roomData.round.strokes || [])].filter(s => !s.preview);
+      strokes.pop();
+      await updateDoc(doc(db, "rooms", roomId), { "round.strokes": strokes });
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
+    }
+
+    function escapeAttr(value) {
+      return escapeHtml(value).replace(/'/g, "&#039;");
+    }
+
+    btnCreate.addEventListener("click", createRoom);
+    btnJoin.addEventListener("click", joinRoom);
+    btnStart.addEventListener("click", startRound);
+    btnResetLocal.addEventListener("click", () => leaveRoom(true));
+    btnNewRound.addEventListener("click", newRound);
+    btnClear.addEventListener("click", clearDrawing);
+    btnUndo.addEventListener("click", undoStroke);
+
+    board.addEventListener("pointerdown", startDraw);
+    board.addEventListener("pointermove", moveDraw);
+    window.addEventListener("pointerup", endDraw);
+    board.addEventListener("touchstart", startDraw, { passive: false });
+    board.addEventListener("touchmove", moveDraw, { passive: false });
+    window.addEventListener("touchend", endDraw);
+
+    window.addEventListener("beforeunload", () => {
+      // Fechar a aba não permite aguardar deleteDoc com segurança.
+      // Marcamos offline; o outro jogador detecta abandono e volta ao lobby.
+      updatePresence(false);
+    });
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "hidden") updatePresence(false);
+      else updatePresence(true);
+    });
+
+    if (roomId && playerId) listenRoom();
+    else show("setup");
+  </script>
+</body>
+</html>
