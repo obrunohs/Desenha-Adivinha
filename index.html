@@ -89,13 +89,36 @@
     /* Em qualquer tela: não mostrar botões antigos caso o navegador carregue HTML antigo misturado */
     button[data-ghost], #btnGhost, #btnCleanGhosts, #btnLeaveSlot { display: none !important; }
 
+
+    /* AJUSTE REAL: no celular deitado tudo precisa caber sem rolar */
+    @media (orientation: landscape) and (max-height: 560px) {
+      .game-layout { grid-template-columns: minmax(0, 1fr) 360px !important; }
+      .words { grid-template-columns: repeat(5, 1fr); grid-template-rows: repeat(5, 1fr); }
+      .word-btn { font-size: 9.8px; padding: 1px; border-radius: 7px; }
+      #scoreInfo { font-size: 10px; }
+      #guesserPanel h3 { font-size: 14px; margin: 0; }
+      .x-box { font-size: 20px; min-height: 22px; line-height: 22px; }
+      #gameStatus { font-size: 12px; padding: 5px 8px; }
+      #roleTitle { font-size: 18px; }
+      .canvas-wrap { padding: 3px; }
+    }
+
+    @media (orientation: landscape) and (max-height: 480px) {
+      .hero { height: 36px; }
+      .hero h1 { font-size: 17px; }
+      #setup, #lobby, #game { height: calc(100vh - 42px); }
+      .game-layout { grid-template-columns: minmax(0, 1fr) 330px !important; }
+      .word-btn { font-size: 8.8px; }
+      .card { padding: 6px; }
+    }
+
   </style>
 </head>
 <body>
   <main class="app">
     <section class="hero">
-      <div><h1>Desenha & Adivinha</h1><p class="subtitle">VERSÃO NOVA SEM BOTÕES 31/05 21:10 - se não aparecer isso, seu site está no cache antigo.</p></div>
-      <button id="btnResetLocal" class="danger">Sair / voltar ao início</button>
+      <div><h1>Desenha & Adivinha</h1><p class="subtitle">VERSÃO CORRIGIDA FINAL - SEM BOTÕES EXTRAS - se não aparecer isso, seu site está no cache antigo.</p></div>
+      <button id="btnResetLocal" class="danger hidden">Sair / voltar ao início</button>
     </section>
 
     <section id="setup" class="grid">
@@ -128,7 +151,7 @@
 
     const now=()=>Date.now();
     const roomRef=()=>doc(db,"rooms",roomId);
-    function show(section){setup.classList.toggle("hidden",section!=="setup");lobby.classList.toggle("hidden",section!=="lobby");game.classList.toggle("hidden",section!=="game");}
+    function show(section){setup.classList.toggle("hidden",section!=="setup");lobby.classList.toggle("hidden",section!=="lobby");game.classList.toggle("hidden",section!=="game");btnResetLocal.classList.toggle("hidden",section==="setup");}
     function saveLocal(){localStorage.setItem("drawGuessRoom",roomId);localStorage.setItem("drawGuessPlayer",playerId);localStorage.setItem("drawGuessName",playerName)}
     function clearLocalOnly(){localStorage.removeItem("drawGuessRoom");localStorage.removeItem("drawGuessPlayer");localStorage.removeItem("drawGuessName");roomId="";playerId="";playerName="";roomData=null;}
     function makeRoomCode(){const c="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let code="";for(let i=0;i<5;i++)code+=c[Math.floor(Math.random()*c.length)];return code}
