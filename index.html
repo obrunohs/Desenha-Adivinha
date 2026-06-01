@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Desenha & Adivinha - VERSAO SORTEIO ALEATORIO</title>
+  <!-- VERSAO_NOVA_SEM_BOTOES_31_05_2110 -->
+  <style>
+    :root{--bg:#101827;--card:#172235;--text:#f7fafc;--muted:#a8b3c7;--accent:#60a5fa;--accent2:#34d399;--danger:#fb7185;--warning:#fbbf24;--line:rgba(255,255,255,.12)}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Arial,Helvetica,sans-serif;background:radial-gradient(circle at top,#1e3a8a 0%,var(--bg) 42%,#070b12 100%);color:var(--text);display:flex;justify-content:center;padding:24px}.app{width:min(1180px,100%)}.hero{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:18px;flex-wrap:wrap}h1,h2,h3,p{margin-top:0}h1{font-size:clamp(28px,5vw,52px);margin-bottom:6px;letter-spacing:-1px}.subtitle{color:var(--muted);margin-bottom:0}.card{background:rgba(23,34,53,.92);border:1px solid var(--line);border-radius:24px;box-shadow:0 20px 70px rgba(0,0,0,.32);padding:22px;backdrop-filter:blur(10px)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}@media(max-width:850px){.grid{grid-template-columns:1fr}}label{display:block;color:var(--muted);font-weight:bold;font-size:14px;margin-bottom:8px}input{width:100%;border:1px solid var(--line);border-radius:14px;background:#0d1422;color:var(--text);padding:13px 14px;font-size:16px;outline:none}input:focus{border-color:var(--accent)}button{border:0;border-radius:14px;padding:13px 16px;font-weight:800;cursor:pointer;color:#06111f;background:linear-gradient(135deg,var(--accent),var(--accent2));transition:transform .12s ease,opacity .12s ease}button:hover{transform:translateY(-1px)}button:disabled{opacity:.45;cursor:not-allowed;transform:none}.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.secondary{background:#e5e7eb}.danger{background:var(--danger);color:#fff}.warning{background:var(--warning)}.hidden{display:none!important}.room-code{font-size:clamp(28px,5vw,48px);font-weight:900;letter-spacing:8px;color:var(--accent2);text-align:center;padding:18px;background:rgba(0,0,0,.22);border-radius:18px;user-select:all}.status{padding:12px 14px;border-radius:16px;background:rgba(96,165,250,.14);border:1px solid rgba(96,165,250,.25);color:#dbeafe;margin:14px 0}.player-list{display:grid;gap:10px;margin-top:12px}.player{display:flex;justify-content:space-between;gap:10px;background:rgba(255,255,255,.06);border:1px solid var(--line);padding:12px;border-radius:16px}.badge{border-radius:999px;padding:5px 10px;font-size:12px;color:#07111f;background:var(--accent2);font-weight:900;white-space:nowrap}.badge.gray{background:#cbd5e1}.badge.red{background:var(--danger);color:#fff}.game-layout{display:grid;grid-template-columns:1fr 340px;gap:18px}.canvas-wrap{background:#fff;border-radius:20px;padding:10px;overflow:hidden}canvas{width:100%;height:auto;display:block;border-radius:14px;background:#fff;touch-action:none}.tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}.tools input[type=color]{width:52px;height:45px;padding:4px}.tools input[type=range]{width:130px}.words{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}.word-btn{padding:10px;background:#e5e7eb;color:#0f172a;border-radius:12px;font-size:14px;text-align:center}.word-btn.wrong{background:#fecdd3;color:#881337;text-decoration:line-through}.word-btn.correct{background:#bbf7d0;color:#14532d}.x-box{font-size:42px;letter-spacing:8px;color:var(--danger);min-height:54px;font-weight:900;text-align:center}.big-result{padding:18px;border-radius:18px;background:rgba(255,255,255,.07);border:1px solid var(--line);margin-top:12px;text-align:center}.small{color:var(--muted);font-size:14px}
+    @media (orientation:landscape) and (max-height:560px){body{padding:8px}.hero{margin-bottom:8px}.hero h1{font-size:22px}.subtitle{display:none}.card{padding:10px;border-radius:16px}.game-layout{grid-template-columns:1fr 280px;gap:8px}.canvas-wrap{padding:5px}#board{max-height:calc(100vh - 125px)}.words{grid-template-columns:repeat(3,1fr);gap:5px}.word-btn{padding:7px;font-size:12px}.status{margin:6px 0;padding:8px}.x-box{font-size:28px;min-height:35px}.btn-row{margin-top:8px}.tools{margin-top:6px}}
+    @media(max-width:980px){.game-layout{grid-template-columns:1fr}}
+
+    @media (orientation:landscape) and (max-height:620px){
+      html,body{height:100%;overflow:hidden}
+      body{padding:6px}
+      .app{width:100%;height:100%;display:flex;flex-direction:column}
+      .hero{height:46px;margin-bottom:6px;flex-wrap:nowrap}.hero h1{font-size:24px;margin:0}.subtitle{display:none}
+      #btnResetLocal{padding:10px 16px;border-radius:16px;white-space:nowrap}
+      .card{padding:10px;border-radius:16px}
+      #game{flex:1;min-height:0}.game-layout{height:calc(100vh - 58px);grid-template-columns:minmax(0,1fr) 390px!important;gap:8px}
+      #game .card{min-height:0;overflow:hidden}#roleTitle{font-size:22px;margin-bottom:6px}.status{margin:5px 0;padding:7px 10px;font-size:14px}
+      .canvas-wrap{padding:5px;height:calc(100vh - 145px)}canvas{height:100%;width:100%;object-fit:contain}
+      aside.card{display:flex;flex-direction:column}aside h3{font-size:15px;margin-bottom:4px}aside hr{display:none}.small{font-size:12px}
+      #scoreInfo{display:grid;grid-template-columns:1fr 1fr;gap:2px;font-size:12px}#scoreInfo p{margin:0}
+      #guesserPanel{min-height:0;display:flex;flex-direction:column}#guesserPanel p{display:none}.x-box{font-size:24px;min-height:28px;letter-spacing:4px}
+      .words{grid-template-columns:repeat(5,1fr);gap:5px;margin-top:4px;overflow:hidden}.word-btn{padding:6px 4px;font-size:11px;line-height:1.05;min-height:30px}
+      #drawerPanel .big-result{padding:10px;margin-top:4px;font-size:22px!important}.tools{margin-top:5px;gap:6px}.tools button{padding:8px 10px}.tools input[type=range]{width:90px}
+      #lobby{max-height:calc(100vh - 58px);overflow:auto}.room-code{padding:10px;font-size:36px}.player{padding:9px}.btn-row{margin-top:8px}
+    }
+  
+
+    /* ===== CORREÇÃO FINAL CELULAR DEITADO ===== */
+    @media (orientation: landscape) and (max-height: 620px) {
+      html, body { width: 100%; height: 100%; overflow: hidden; }
+      body { padding: 6px; }
+      .app { width: 100%; height: 100vh; overflow: hidden; }
+      .hero { height: 42px; margin-bottom: 6px; align-items: center; }
+      .hero h1 { font-size: 20px; margin: 0; }
+      .subtitle { display: none !important; }
+      #btnResetLocal { padding: 9px 12px; font-size: 13px; border-radius: 14px; }
+      #setup, #lobby, #game { height: calc(100vh - 50px); overflow: hidden; }
+      #game { display: block; }
+      #game.hidden { display: none !important; }
+      .game-layout {
+        height: 100%;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 430px !important;
+        gap: 6px;
+      }
+      .card { padding: 8px; border-radius: 14px; min-height: 0; overflow: hidden; }
+      #game .card:first-child { display: flex; flex-direction: column; }
+      #roleTitle { font-size: 20px; margin-bottom: 4px; }
+      #gameStatus { margin: 4px 0 6px; padding: 7px 10px; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .canvas-wrap { flex: 1; min-height: 0; padding: 4px; border-radius: 14px; display: flex; align-items: center; justify-content: center; }
+      #board { width: 100%; height: 100%; max-height: none; object-fit: contain; border-radius: 10px; }
+      .tools { margin-top: 4px; gap: 5px; }
+      .tools label { font-size: 11px; margin: 0; }
+      .tools input[type="range"] { width: 90px; }
+      .tools button { padding: 7px 8px; font-size: 11px; }
+      aside.card { display: flex; flex-direction: column; }
+      aside.card > h3 { display: none; }
+      #scoreInfo { display: grid; grid-template-columns: 1fr 1fr 70px; gap: 4px; font-size: 11px; }
+      #scoreInfo p { margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      aside.card hr { display: none; }
+      #guesserPanel { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+      #guesserPanel.hidden { display: none !important; }
+      #guesserPanel h3 { font-size: 16px; margin: 2px 0; }
+      #guesserPanel p { display: none; }
+      .x-box { font-size: 24px; min-height: 28px; line-height: 28px; }
+      .words {
+        flex: 1;
+        min-height: 0;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        grid-template-rows: repeat(5, 1fr);
+        gap: 4px;
+        margin-top: 3px;
+      }
+      .word-btn { padding: 2px; font-size: 10.5px; line-height: 1; min-height: 0; border-radius: 8px; }
+      #drawerPanel h3 { font-size: 16px; margin-bottom: 4px; }
+      #secretWord { padding: 10px; font-size: 22px !important; margin-top: 4px; }
+      #drawerPanel p { font-size: 11px; margin-top: 6px !important; }
+      #resultPanel { padding: 8px; margin-top: 6px; font-size: 12px; }
+      #btnNewRound { padding: 7px 9px; font-size: 11px; }
+      #lobby .btn-row button:not(#btnStart), #lobby button[id*="Ghost"], #lobby button[id*="Leave"], #lobby button[id*="Clean"] { display: none !important; }
+    }
+
+    /* Em qualquer tela: não mostrar botões antigos caso o navegador carregue HTML antigo misturado */
+    button[data-ghost], #btnGhost, #btnCleanGhosts, #btnLeaveSlot { display: none !important; }
+
+
+    /* AJUSTE REAL: no celular deitado tudo precisa caber sem rolar */
+    @media (orientation: landscape) and (max-height: 560px) {
+      .game-layout { grid-template-columns: minmax(0, 1fr) 360px !important; }
+      .words { grid-template-columns: repeat(5, 1fr); grid-template-rows: repeat(5, 1fr); }
+      .word-btn { font-size: 9.8px; padding: 1px; border-radius: 7px; }
+      #scoreInfo { font-size: 10px; }
+      #guesserPanel h3 { font-size: 14px; margin: 0; }
+      .x-box { font-size: 20px; min-height: 22px; line-height: 22px; }
+      #gameStatus { font-size: 12px; padding: 5px 8px; }
+      #roleTitle { font-size: 18px; }
+      .canvas-wrap { padding: 3px; }
+    }
+
+    @media (orientation: landscape) and (max-height: 480px) {
+      .hero { height: 36px; }
+      .hero h1 { font-size: 17px; }
+      #setup, #lobby, #game { height: calc(100vh - 42px); }
+      .game-layout { grid-template-columns: minmax(0, 1fr) 330px !important; }
+      .word-btn { font-size: 8.8px; }
+      .card { padding: 6px; }
+    }
+
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="hero">
+      <div><h1>Desenha & Adivinha</h1><p class="subtitle">VERSÃO CORRIGIDA FINAL - SEM BOTÕES EXTRAS - se não aparecer isso, seu site está no cache antigo.</p></div>
+      <button id="btnResetLocal" class="danger hidden">Sair / voltar ao início</button>
+    </section>
+
+    <section id="setup" class="grid">
+      <div class="card"><h2>Criar sala</h2><label for="createName">Seu nome</label><input id="createName" placeholder="Ex: Bruno" maxlength="18"/><div class="btn-row"><button id="btnCreate">Criar sala</button></div><p class="small" style="margin-top:14px">A rotação do celular só será tentada quando a partida começar.</p></div>
+      <div class="card"><h2>Entrar em sala</h2><label for="joinName">Seu nome</label><input id="joinName" placeholder="Ex: Ana" maxlength="18"/><label for="joinCode" style="margin-top:12px">Código da sala</label><input id="joinCode" placeholder="Ex: A7K2Q" maxlength="5"/><div class="btn-row"><button id="btnJoin">Entrar</button></div></div>
+    </section>
+
+    <section id="lobby" class="card hidden">
+      <h2>Lobby da sala</h2><p class="small">Compartilhe este código:</p><div id="roomCode" class="room-code">-----</div><div id="lobbyStatus" class="status">Aguardando jogadores...</div><div id="players" class="player-list"></div>
+      <div class="btn-row"><button id="btnStart" disabled>Sortear funções e começar</button></div>
+    </section>
+
+    <section id="game" class="hidden"><div class="game-layout"><div class="card"><h2 id="roleTitle">Jogo</h2><div id="gameStatus" class="status"></div><div class="canvas-wrap"><canvas id="board" width="900" height="560"></canvas></div><div id="drawTools" class="tools hidden"><label>Cor <input id="color" type="color" value="#111827"/></label><label>Tamanho <input id="size" type="range" min="2" max="34" value="8"/></label><button id="btnUndo" class="secondary">Desfazer</button><button id="btnClear" class="warning">Limpar desenho</button></div></div><aside class="card"><h3>Placar</h3><div id="scoreInfo" class="small"></div><hr style="border-color:var(--line);border-style:solid;margin:16px 0"/><div id="drawerPanel" class="hidden"><h3>Objeto para desenhar</h3><div id="secretWord" class="big-result" style="font-size:28px;font-weight:900"></div><p class="small" style="margin-top:12px">Desenhe aos poucos. O outro jogador verá em tempo real.</p></div><div id="guesserPanel" class="hidden"><h3>Escolha o objeto</h3><p class="small">Você tem até 3 tentativas.</p><div id="xBox" class="x-box"></div><div id="words" class="words"></div></div><div id="resultPanel" class="hidden big-result"></div><div class="btn-row"><button id="btnNewRound" class="hidden">Nova rodada</button></div></aside></div></section>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+    import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+    const firebaseConfig={apiKey:"AIzaSyAd-73yu6VybMMP7WHjUiHPbPzadHrCmek",authDomain:"desenha-adivinha.firebaseapp.com",projectId:"desenha-adivinha",storageBucket:"desenha-adivinha.firebasestorage.app",messagingSenderId:"350417452805",appId:"1:350417452805:web:25c595327bb91b7201816c"};
+    const app=initializeApp(firebaseConfig); const db=getFirestore(app);
+
+    const OBJECTS=["casa","avião","bicicleta","gato","cachorro","sol","lua","estrela","árvore","flor","carro","barco","peixe","bola","chapéu","óculos","relógio","telefone","computador","cadeira","mesa","sapato","camisa","coração","guarda-chuva","foguete","pizza","hambúrguer","sorvete","bolo","violão","tambor","livro","lápis","tesoura","chave","porta","janela","ponte","montanha","nuvem","raio","robô","dinossauro","borboleta","abelha","cobra","tartaruga","coelho","cavalo"];
+    const $=id=>document.getElementById(id);
+    const setup=$("setup"),lobby=$("lobby"),game=$("game"),roomCodeEl=$("roomCode"),playersEl=$("players"),lobbyStatus=$("lobbyStatus"),btnStart=$("btnStart"),btnCreate=$("btnCreate"),btnJoin=$("btnJoin"),btnResetLocal=$("btnResetLocal"),btnNewRound=$("btnNewRound"),btnUndo=$("btnUndo"),btnClear=$("btnClear"),board=$("board"),ctx=board.getContext("2d");
+
+    let roomId=localStorage.getItem("drawGuessRoom")||"", playerId=localStorage.getItem("drawGuessPlayer")||"", playerName=localStorage.getItem("drawGuessName")||"";
+    let unsubscribe=null, roomData=null, drawing=false, currentStroke=null, lastSentAt=0, heartbeatTimer=null, watcherTimer=null, landscapeLocked=false;
+    const HEARTBEAT_EVERY=2500, ABANDON_LIMIT=9000;
+
+    const now=()=>Date.now();
+    const roomRef=()=>doc(db,"rooms",roomId);
+    function show(section){setup.classList.toggle("hidden",section!=="setup");lobby.classList.toggle("hidden",section!=="lobby");game.classList.toggle("hidden",section!=="game");btnResetLocal.classList.toggle("hidden",section==="setup");}
+    function saveLocal(){localStorage.setItem("drawGuessRoom",roomId);localStorage.setItem("drawGuessPlayer",playerId);localStorage.setItem("drawGuessName",playerName)}
+    function clearLocalOnly(){localStorage.removeItem("drawGuessRoom");localStorage.removeItem("drawGuessPlayer");localStorage.removeItem("drawGuessName");roomId="";playerId="";playerName="";roomData=null;}
+    function makeRoomCode(){const c="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let code="";for(let i=0;i<5;i++)code+=c[Math.floor(Math.random()*c.length)];return code}
+    function makePlayerId(){return crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random()}
+    function shuffle(a){return[...a].sort(()=>Math.random()-.5)}
+
+    function randomInt(max){
+      if(max<=0)return 0;
+      if(window.crypto&&crypto.getRandomValues){
+        const a=new Uint32Array(1);
+        crypto.getRandomValues(a);
+        return a[0]%max;
+      }
+      return Math.floor(Math.random()*max);
+    }
+    function sortearFuncoes(players){
+      const lista=[...players];
+      const drawerIndex=randomInt(lista.length);
+      const drawer=lista[drawerIndex];
+      const guesser=lista.find(p=>p.id!==drawer.id);
+      return {drawer,guesser};
+    }
+    function withPresence(p){return{...p,online:true,lastSeen:now()}}
+    function isSelf(p){return p&&p.id===playerId}
+    function isActive(p){if(!p)return false;if(isSelf(p))return true;if(p.online===false)return false;return Number(p.lastSeen||0)>0 && now()-Number(p.lastSeen)<ABANDON_LIMIT}
+    function activePlayers(players=[]){return players.filter(isActive)}
+    function pickRound(){const answer=OBJECTS[Math.floor(Math.random()*OBJECTS.length)];const options=shuffle(OBJECTS.filter(w=>w!==answer)).slice(0,24);return{answer,options:shuffle([...options,answer]),strokes:[],guesses:[],wrong:0,status:"playing",winner:"",roundStartedAt:now()}}
+
+    async function requestLandscapeMode(){if(landscapeLocked)return;landscapeLocked=true;try{if(document.documentElement.requestFullscreen&&!document.fullscreenElement)await document.documentElement.requestFullscreen();if(screen.orientation?.lock)await screen.orientation.lock("landscape")}catch(e){console.log("O navegador não permitiu virar automaticamente.",e)}}
+    async function unlockOrientationMode(){landscapeLocked=false;try{if(screen.orientation?.unlock)screen.orientation.unlock();if(document.fullscreenElement&&document.exitFullscreen)await document.exitFullscreen()}catch(e){}}
+
+    async function updateMyPresence(online=true){if(!roomId||!playerId||!roomData)return;const players=(roomData.players||[]).map(p=>p.id===playerId?{...p,online,lastSeen:now()}:p);try{await updateDoc(roomRef(),{players,lastActivity:now()})}catch(e){}}
+    function startHeartbeat(){clearInterval(heartbeatTimer);heartbeatTimer=setInterval(()=>updateMyPresence(true),HEARTBEAT_EVERY)}
+    function stopHeartbeat(){clearInterval(heartbeatTimer);heartbeatTimer=null}
+    function startWatcher(){clearInterval(watcherTimer);watcherTimer=setInterval(cleanGhostsAndCheckGame,3000)}
+    function stopWatcher(){clearInterval(watcherTimer);watcherTimer=null}
+
+    async function cleanGhostsAndCheckGame(){if(!roomData||!roomId||!playerId)return;const act=activePlayers(roomData.players||[]);const changed=act.length!==(roomData.players||[]).length;if(changed){try{if(act.length===0){await deleteDoc(roomRef());return}await updateDoc(roomRef(),{players:act.map(p=>isSelf(p)?withPresence({id:p.id,name:p.name}):p),hostId:act[0].id,phase:act.length<2?"lobby":roomData.phase,drawerId:act.length<2?"":roomData.drawerId,guesserId:act.length<2?"":roomData.guesserId,round:act.length<2?null:roomData.round})}catch(e){}}
+      if(roomData.phase==="game"&&act.length<2){alert("O outro jogador saiu. Você voltou para o lobby.");}
+    }
+
+    async function resetRoomToLobby(playersToKeep){const keep=playersToKeep.map(p=>withPresence({id:p.id,name:p.name}));if(keep.length===0){await deleteDoc(roomRef());return}await updateDoc(roomRef(),{phase:"lobby",hostId:keep[0].id,drawerId:"",guesserId:"",round:null,players:keep,lastActivity:now()})}
+
+    async function leaveRoom(reload=true){const oldRoomId=roomId, oldPlayerId=playerId, data=roomData;stopHeartbeat();stopWatcher();await unlockOrientationMode();if(unsubscribe){unsubscribe();unsubscribe=null}clearLocalOnly();show("setup");try{if(oldRoomId&&oldPlayerId&&data){const ref=doc(db,"rooms",oldRoomId);const remaining=(data.players||[]).filter(p=>p.id!==oldPlayerId&&isActive(p));if(remaining.length===0)await deleteDoc(ref);else await updateDoc(ref,{phase:"lobby",hostId:remaining[0].id,drawerId:"",guesserId:"",round:null,players:remaining.map(p=>withPresence({id:p.id,name:p.name})),lastActivity:now()})}}catch(e){console.log("Falha ao sair.",e)}if(reload)location.reload()}
+
+
+    async function createRoom(){const name=$("createName").value.trim();if(!name)return alert("Digite seu nome.");await leaveRoom(false);roomId=makeRoomCode();playerId=makePlayerId();playerName=name;saveLocal();await setDoc(roomRef(),{createdAt:serverTimestamp(),lastActivity:now(),hostId:playerId,phase:"lobby",players:[withPresence({id:playerId,name})],drawerId:"",guesserId:"",round:null});listenRoom()}
+
+    async function joinRoom(){const name=$("joinName").value.trim();const code=$("joinCode").value.trim().toUpperCase();if(!name||!code)return alert("Digite seu nome e o código da sala.");await leaveRoom(false);roomId=code;const ref=roomRef();const snap=await getDoc(ref);if(!snap.exists()){clearLocalOnly();show("setup");return alert("Sala não encontrada.")}
+      const data=snap.data();let act=(data.players||[]).filter(p=>Number(p.lastSeen||0)>0&&p.online!==false&&now()-Number(p.lastSeen)<ABANDON_LIMIT);
+      if(data.phase==="lobby"&&act.length>=1){const host=act.find(p=>p.id===data.hostId)||act[0];act=[host]}
+      if(data.phase==="game"&&act.length>=2){clearLocalOnly();show("setup");return alert("Essa partida já começou com 2 jogadores.")}
+      playerId=makePlayerId();playerName=name;saveLocal();await updateDoc(ref,{phase:"lobby",drawerId:"",guesserId:"",round:null,hostId:act[0]?.id||playerId,players:[...act,withPresence({id:playerId,name})],lastActivity:now()});listenRoom()}
+
+    function listenRoom(){if(!roomId)return;if(unsubscribe)unsubscribe();unsubscribe=onSnapshot(roomRef(),snap=>{if(!snap.exists()){clearLocalOnly();stopHeartbeat();stopWatcher();unlockOrientationMode();show("setup");return}roomData=snap.data();const inRoom=(roomData.players||[]).some(p=>p.id===playerId);if(playerId&&!inRoom){clearLocalOnly();stopHeartbeat();stopWatcher();unlockOrientationMode();show("setup");return}render();startHeartbeat();startWatcher()},err=>{console.error(err);alert("Erro no Firebase. Confira as regras do Firestore.")})}
+
+    async function startRound(){
+      if(!roomData)return;
+      const players=activePlayers(roomData.players||[]);
+      if(players.length<2){await resetRoomToLobby(players);return alert("Só tem 1 jogador ativo. Peça para seu colega entrar de novo.")}
+      const roles=sortearFuncoes(players);
+      await updateDoc(roomRef(),{
+        phase:"game",
+        players:players.map(p=>withPresence({id:p.id,name:p.name})),
+        drawerId:roles.drawer.id,
+        guesserId:roles.guesser.id,
+        roleDrawnAt:now(),
+        round:pickRound(),
+        lastActivity:now()
+      })
+    }
+    async function newRound(){
+      const players=activePlayers(roomData.players||[]);
+      if(players.length<2){await resetRoomToLobby(players);return alert("Aguardando dois jogadores ativos.")}
+      const roles=sortearFuncoes(players);
+      await updateDoc(roomRef(),{
+        players:players.map(p=>withPresence({id:p.id,name:p.name})),
+        drawerId:roles.drawer.id,
+        guesserId:roles.guesser.id,
+        roleDrawnAt:now(),
+        round:pickRound(),
+        lastActivity:now()
+      })
+    }
+
+    function render(){roomCodeEl.textContent=roomId||"-----";const act=activePlayers(roomData.players||[]);if(roomData.phase==="lobby"){unlockOrientationMode();show("lobby");playersEl.innerHTML=act.map(p=>`<div class="player"><strong>${escapeHtml(p.name)}</strong><span class="badge ${p.id===roomData.hostId?"":"gray"}">${p.id===roomData.hostId?"criador":"jogador"}</span></div>`).join("")||'<div class="player"><strong>Nenhum jogador ativo</strong></div>';lobbyStatus.textContent=act.length<2?"Aguardando o segundo jogador entrar...":"Dois jogadores prontos. O criador pode começar.";btnStart.disabled=!(act.length===2&&playerId===roomData.hostId);return}requestLandscapeMode();show("game");renderGame()}
+
+    function renderGame(){const players=roomData.players||[];const drawer=players.find(p=>p.id===roomData.drawerId);const guesser=players.find(p=>p.id===roomData.guesserId);const isDrawer=playerId===roomData.drawerId;const isGuesser=playerId===roomData.guesserId;const round=roomData.round||{};$("roleTitle").textContent=isDrawer?"Você vai desenhar":"Você vai adivinhar";$("gameStatus").textContent=isDrawer?`${guesser?.name||"O outro jogador"} está tentando adivinhar.`:`${drawer?.name||"O outro jogador"} está desenhando em tempo real.`;$("scoreInfo").innerHTML=`<p><strong>Desenhista:</strong> ${escapeHtml(drawer?.name||"-")}</p><p><strong>Adivinhador:</strong> ${escapeHtml(guesser?.name||"-")}</p><p><strong>Erros:</strong> ${round.wrong||0}/3</p>`;$("drawerPanel").classList.toggle("hidden",!isDrawer);$("guesserPanel").classList.toggle("hidden",!isGuesser);$("drawTools").classList.toggle("hidden",!isDrawer||round.status!=="playing");btnNewRound.classList.toggle("hidden",playerId!==roomData.hostId);$("secretWord").textContent=isDrawer?round.answer:"";$("xBox").textContent="X".repeat(round.wrong||0);renderWords(round,isGuesser);renderResult(round);redraw(round.strokes||[])}
+
+    function renderWords(round,isGuesser){const wordsEl=$("words");if(!isGuesser)return;const guesses=round.guesses||[];wordsEl.innerHTML=(round.options||[]).map(word=>{const guessed=guesses.find(g=>g.word===word);const cls=guessed?(guessed.correct?"correct":"wrong"):"";const disabled=guessed||round.status!=="playing";return`<button class="word-btn ${cls}" ${disabled?"disabled":""} data-word="${escapeAttr(word)}">${escapeHtml(word)}</button>`}).join("");wordsEl.querySelectorAll("button[data-word]").forEach(btn=>btn.addEventListener("click",()=>guess(btn.dataset.word)))}
+    function renderResult(round){const result=$("resultPanel");if(!round||round.status==="playing"){result.classList.add("hidden");return}result.classList.remove("hidden");result.innerHTML=round.status==="won"?`<h3>Acertou!</h3><p>O objeto era <strong>${escapeHtml(round.answer)}</strong>.</p>`:`<h3>Game Over</h3><p>O objeto era <strong>${escapeHtml(round.answer)}</strong>.</p>`}
+    async function guess(word){const round=roomData.round;if(!round||round.status!=="playing"||playerId!==roomData.guesserId)return;const correct=word===round.answer;const guesses=[...(round.guesses||[]),{word,correct,at:now()}];const wrong=correct?round.wrong:(round.wrong||0)+1;const status=correct?"won":(wrong>=3?"lost":"playing");await updateDoc(roomRef(),{"round.guesses":guesses,"round.wrong":wrong,"round.status":status,"round.winner":correct?playerId:"",lastActivity:now()})}
+
+    function getPoint(evt){const rect=board.getBoundingClientRect();const client=evt.touches?evt.touches[0]:evt;return{x:(client.clientX-rect.left)*(board.width/rect.width),y:(client.clientY-rect.top)*(board.height/rect.height)}}
+    function canDraw(){return roomData&&playerId===roomData.drawerId&&roomData.round?.status==="playing"}
+    function startDraw(evt){if(!canDraw())return;drawing=true;const p=getPoint(evt);currentStroke={color:$("color").value,size:Number($("size").value),points:[p]};evt.preventDefault()}
+    function moveDraw(evt){if(!drawing||!currentStroke||!canDraw())return;currentStroke.points.push(getPoint(evt));redraw([...(roomData.round.strokes||[]),currentStroke]);if(now()-lastSentAt>100){lastSentAt=now();saveStroke(false)}evt.preventDefault()}
+    async function endDraw(){if(!drawing||!currentStroke||!canDraw())return;drawing=false;await saveStroke(true);currentStroke=null}
+    async function saveStroke(finalize){if(!currentStroke||!roomData?.round)return;const base=(roomData.round.strokes||[]).filter(s=>!s.preview);const strokes=finalize?[...base,currentStroke]:[...base,{...currentStroke,preview:true}];await updateDoc(roomRef(),{"round.strokes":strokes,lastActivity:now()})}
+    function redraw(strokes){ctx.clearRect(0,0,board.width,board.height);ctx.fillStyle="#fff";ctx.fillRect(0,0,board.width,board.height);ctx.lineCap="round";ctx.lineJoin="round";strokes.forEach(stroke=>{const pts=stroke.points||[];if(!pts.length)return;ctx.strokeStyle=stroke.color||"#111827";ctx.lineWidth=stroke.size||8;ctx.beginPath();ctx.moveTo(pts[0].x,pts[0].y);pts.forEach(p=>ctx.lineTo(p.x,p.y));ctx.stroke()})}
+    async function clearDrawing(){if(canDraw())await updateDoc(roomRef(),{"round.strokes":[],lastActivity:now()})}
+    async function undoStroke(){if(!canDraw())return;const strokes=[...(roomData.round.strokes||[])].filter(s=>!s.preview);strokes.pop();await updateDoc(roomRef(),{"round.strokes":strokes,lastActivity:now()})}
+    function escapeHtml(v){return String(v).replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]))}
+    function escapeAttr(v){return escapeHtml(v).replace(/'/g,"&#039;")}
+
+    btnCreate.addEventListener("click",createRoom);btnJoin.addEventListener("click",joinRoom);btnStart.addEventListener("click",startRound);btnResetLocal.addEventListener("click",()=>leaveRoom(true));btnNewRound.addEventListener("click",newRound);btnClear.addEventListener("click",clearDrawing);btnUndo.addEventListener("click",undoStroke);
+    board.addEventListener("pointerdown",startDraw);board.addEventListener("pointermove",moveDraw);window.addEventListener("pointerup",endDraw);board.addEventListener("touchstart",startDraw,{passive:false});board.addEventListener("touchmove",moveDraw,{passive:false});window.addEventListener("touchend",endDraw);
+    window.addEventListener("beforeunload",()=>{updateMyPresence(false)});document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")updateMyPresence(true)});
+    if(roomId&&playerId)listenRoom();else show("setup");
+  </script>
+</body>
+</html>
